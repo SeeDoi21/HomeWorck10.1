@@ -12,7 +12,7 @@ def filter_by_state(data: List[Dict[str, Any]], state: str = 'EXECUTED') -> List
 
 def sort_by_date(data: List[Dict[str, Any]], descending: bool = True) -> List[Dict[str, Any]]:
     """
-    Сортиует список словарей по date
+    Сортирует список словарей по date
     """
     return sorted(
         data,
