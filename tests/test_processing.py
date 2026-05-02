@@ -30,27 +30,23 @@ def test_filter_by_state(state, expected):
 
 def test_sort_by_date_descending(data):
     """Тестирование сортировки в порядке убывания"""
-
     sorted_data = sort_by_date(data, descending=True)
     assert sorted_data[0]['date'] == '2019-07-03T18:35:29.512364'
 
 
 def test_sort_by_date_ascending(data):
     """Тестирование сортировки в порядке возрастания"""
-
     sorted_data = sort_by_date(data, descending=False)
     assert sorted_data[0]['date'] == '2018-06-30T02:08:58.425572'
 
 
 def test_sort_with_same_dates(data):
     """Проверка корректности сортировки при одинаковых датах"""
-
     sorted_data = sort_by_date(data)
     assert sorted_data == data
 
 
 def test_sort_with_invalid_date_format(invalid_date):
     """Тесты на работу с некорректными форматами дат"""
-
     with pytest.raises(ValueError):
         sort_by_date(invalid_date)

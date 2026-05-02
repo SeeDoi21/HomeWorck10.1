@@ -3,25 +3,38 @@ import pytest
 from src.masks import get_mask_account, get_mask_card_number
 
 
-def test_get_mask_card_number(card_str):
-    """ Функция тестирования сценариев ввода функции get_mask_card_number
-     из модуля masks.py"""
-    assert get_mask_card_number(1234567890123456) == "1234 56** **** 3456"
-    assert get_mask_card_number(1234567891234567) == "1234 56** **** 4567"
-    if len(card_str) != 16:
-        raise ValueError("Номер карты должен содержать 16 цифр")
-
-    with pytest.raises(ValueError):
-        get_mask_card_number("=+-_&*^")
+# Тестирование правильности маскирования номера карты
+@pytest.mark.parametrize("expected", [
+    "1234 56** **** 5678",
+])
+def test_get_mask_card_number_masking(valid_card_numbers, expected):
+    for card_number in valid_card_numbers:
+        assert get_mask_card_number(card_number) == expected
 
 
-def test_get_mask_account(account_str):
-    """Функция тестирования сценариев ввода функции get_mask_account
-    из модуля masks.py"""
-    assert get_mask_account(12345600007890123456) == "**3456"
-    assert get_mask_account(12345670000891234567) == "**4567"
-    if len(account_str) != 20:
-        raise ValueError("Номер счёта должен содержать 20 цифр")
+# Проверка выброса исключения для номера карты неправильной длины
+@pytest.mark.parametrize("expected_exception", [ValueError])
+def test_get_mask_card_number_invalid_length(invalid_card_numbers, expected_exception):
+    for card_number in invalid_card_numbers:
+        with pytest.raises(expected_exception, match="Номер карты должен содержать 16 цифр"):
+            get_mask_card_number(card_number)
 
-    with pytest.raises(ValueError):
-        get_mask_account("=+-_&*^")
+
+# Проверка некорректного ввода
+@pytest.mark.parametrize("expected_exception", [ValueError])
+def test_get_mask_card_number_invalid_input(invalid_inputs, expected_exception):
+    for card_number in invalid_inputs:
+        with pytest.raises(expected_exception):
+            get_mask_card_number(card_number)
+
+
+# Тест на возврат валидного номера счёта
+def test_mask_account_with_valid_number(valid_account_number):
+    masked = get_mask_account(valid_account_number)
+    assert masked == "**7890"
+
+
+# Проверка обработки некорректных данных
+def test_mask_account_invalid_length():
+    with pytest.raises(ValueError, match="Номер счёта должен содержать 20 цифр"):
+        get_mask_account("123")
